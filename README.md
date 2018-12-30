@@ -23,16 +23,16 @@ This can be viewed in a web app which runs locally.
 # File Structure
 
 - app
-    templates
-        go.html
-        master.html
-    run.py
+    - templates
+        - go.html
+        - master.html
+    - run.py
 - data
-    disaster_categories.csv
-    disaster_messages.csv
-    DisasterResponse.db
-    process_data.py
+    - disaster_categories.csv
+    - disaster_messages.csv
+    - DisasterResponse.db
+    - process_data.py
 - models
-    classifier.pkl
-    train_classifier.py
+    - classifier.pkl
+    - train_classifier.py
 
