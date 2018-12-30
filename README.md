@@ -22,17 +22,17 @@ This can be viewed in a web app which runs locally.
 
 # File Structure
 
-app
+- app
     templates
         go.html
         master.html
     run.py
-data
+- data
     disaster_categories.csv
     disaster_messages.csv
     DisasterResponse.db
     process_data.py
-models
+- models
     classifier.pkl
     train_classifier.py
 
