@@ -4,7 +4,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 import sqlite3
 import pickle
-from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score
+from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score, classification_report
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline, FeatureUnion
@@ -16,8 +16,10 @@ nltk.download(['punkt', 'wordnet', 'averaged_perceptron_tagger'])
 from nltk.tokenize import word_tokenize
 from nltk.tokenize import sent_tokenize
 from nltk.stem import WordNetLemmatizer
+from nltk.corpus import stopwords
 
 def load_data(database_filepath):
+    """Loads data from database to dataframe and extracts X and Y values from it"""
     engine = create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql('SELECT * FROM DisasterResponse', engine)
     X = df[['id', 'message', 'original', 'genre']]
@@ -25,7 +27,9 @@ def load_data(database_filepath):
     return X, Y, df
 
 def tokenize(text):
+    """Takes plaintext messages and returns the key words in lower case"""
     words = word_tokenize(text)
+    words = [w for w in words if w not in stopwords.words("english")]
     lemmatizer = WordNetLemmatizer()
     clean_tokens = []
     for tok in words:
@@ -34,6 +38,7 @@ def tokenize(text):
     return clean_tokens
 
 def build_model():
+    """Constructs the ml pipeline and performs grid search for the best parametres"""
     pipeline = Pipeline([
         ('features', FeatureUnion([
 
@@ -51,12 +56,13 @@ def build_model():
         'moc__estimator__min_samples_split': [2]
     }
 
-    cv = GridSearchCV(pipeline, param_grid=parameters)
+    cv = GridSearchCV(pipeline, param_grid=parameters, cv=5)
     
     return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """Calculates and displays various performance metrics"""
     Y_pred = model.predict(X_test['message'])
 
     tp = np.logical_and((Y_test == 1), (Y_pred == 1)).sum()
@@ -76,7 +82,13 @@ def evaluate_model(model, X_test, Y_test, category_names):
     print("Recall", recall_score.mean())
     print("F1", f1_score.mean())
 
+    # The reason I hand wrote my evaluation is because I keep getting this error,
+    # ValueError: multiclass-multioutput is not supported,
+    # when I write things like this: 
+    # print(classification_report(Y_test, Y_pred))
+
 def save_model(model, model_filepath):
+    """Saves the trained model in a pickle file"""
     pickle.dump(model, open(model_filepath, 'wb'))
 
 

@@ -46,7 +46,7 @@ def index():
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
 
-    # This example doesn't seem to show up in the web app when I run it. I feel like I must be missing 
+    # This example doesn't show up in the web app when I run it. I feel like I must be missing 
     # something quite obvious!
 
     graphs = [

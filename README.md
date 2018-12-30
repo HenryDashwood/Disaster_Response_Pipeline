@@ -1,5 +1,4 @@
 # Disaster Response Pipeline Project
-
 In this project things take place:
 - Short social media messages from disaster zones and their classifications are read into a dataframe.
 - This data is transformed using nltk and scikit learn's pipeline.
@@ -21,7 +20,6 @@ This can be viewed in a web app which runs locally.
 3. Go to http://0.0.0.0:3001/
 
 # File Structure
-
 - app
     - templates
         - go.html
@@ -35,4 +33,3 @@ This can be viewed in a web app which runs locally.
 - models
     - classifier.pkl
     - train_classifier.py
-
