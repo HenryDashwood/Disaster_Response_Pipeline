@@ -28,6 +28,7 @@ def tokenize(text):
 # load data
 engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table('DisasterResponse', engine)
+df = df.drop('related', axis=1)
 
 # load model
 model = joblib.load("../models/classifier.pkl")
@@ -42,13 +43,13 @@ def index():
     # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
+
+    Y = df.drop(['id', 'message', 'original', 'genre'], axis=1)
+    category_counts = Y.apply(pd.Series.value_counts).iloc[1].sort_values(ascending=False)
+    category_names = list(category_counts.index)
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
-
-    # This example doesn't show up in the web app when I run it. I feel like I must be missing 
-    # something quite obvious!
-
     graphs = [
         {
             'data': [
@@ -57,7 +58,6 @@ def index():
                     y=genre_counts
                 )
             ],
-
             'layout': {
                 'title': 'Distribution of Message Genres',
                 'yaxis': {
@@ -65,6 +65,24 @@ def index():
                 },
                 'xaxis': {
                     'title': "Genre"
+                }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    y=category_names,
+                    x=category_counts,
+                    orientation = 'h'
+                )
+            ],
+            'layout': {
+                'title': 'Distribution of Message Categories',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Category"
                 }
             }
         }

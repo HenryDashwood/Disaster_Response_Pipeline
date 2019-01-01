@@ -22,6 +22,7 @@ def load_data(database_filepath):
     """Loads data from database to dataframe and extracts X and Y values from it"""
     engine = create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql('SELECT * FROM DisasterResponse', engine)
+    df = df.drop('related', axis=1)
     X = df[['id', 'message', 'original', 'genre']]
     Y = df.drop(['id', 'message', 'original', 'genre'], axis=1)
     return X, Y, df
@@ -65,27 +66,7 @@ def evaluate_model(model, X_test, Y_test, category_names):
     """Calculates and displays various performance metrics"""
     Y_pred = model.predict(X_test['message'])
 
-    tp = np.logical_and((Y_test == 1), (Y_pred == 1)).sum()
-    fp = np.logical_and((Y_test == 0), (Y_pred == 1)).sum()
-    fn = np.logical_and((Y_test == 1), (Y_pred == 0)).sum()
-
-    precision_score = tp / (tp + fp).mean()
-    recall_score = tp / (tp + fn).mean()
-
-    f1_score = 2 * (precision_score * recall_score) / (precision_score + recall_score)
-    f1_score = f1_score.mean()
-
-    accuracy_score = (Y_pred == Y_test).mean()
-    
-    print("Accuracy", accuracy_score.mean())
-    print("Precision", precision_score.mean())
-    print("Recall", recall_score.mean())
-    print("F1", f1_score.mean())
-
-    # The reason I hand wrote my evaluation is because I keep getting this error,
-    # ValueError: multiclass-multioutput is not supported,
-    # when I write things like this: 
-    # print(classification_report(Y_test, Y_pred))
+    print(classification_report(Y_test, Y_pred))
 
 def save_model(model, model_filepath):
     """Saves the trained model in a pickle file"""
